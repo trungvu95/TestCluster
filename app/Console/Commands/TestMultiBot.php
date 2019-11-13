@@ -48,6 +48,9 @@ class TestMultiBot extends Command
             case 'create-autoscaling-group':
                 $this->createAutoScalingGroup();
                 break;
+            case 'delete-autoscaling-group':
+                $this->deleteAutoScalingGroup();
+                break;
         }
 
     }
@@ -101,8 +104,21 @@ class TestMultiBot extends Command
             'region' => env('AWS_DEFAULT_REGION'),
             'version' => 'latest'
         ]);
-
         $response = $client->createAutoScalingGroup(ClusterHelper::getCreateAutoScalingGroupData());
+
+        dd($response);
+    }
+
+    private function deleteAutoScalingGroup()
+    {
+        $client = new AutoScalingClient([
+            'region' => env('AWS_DEFAULT_REGION'),
+            'version' => 'latest'
+        ]);
+        $response = $client->deleteAutoScalingGroup([
+            'AutoScalingGroupName' => env('AUTO_SCALING_GROUP_NAME', 'test-group'),
+            'ForceDelete' => true,
+        ]);
 
         dd($response);
     }
