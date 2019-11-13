@@ -73,18 +73,20 @@ class TestMultiBot extends Command
         if ($this->isAllJobDone($client)) {
             echo "All Jobs finished \n";
 
-            $this->deleteAllJobs($client);
+            $this->deleteJob($client);
         }
     }
 
     private function isAllJobDone(Client $client)
     {
-        while (true) {
-            $finishCount = 0;
+        $finishCount = 0;
 
+        while (true) {
             for ($i = 0; $i < env('JOB_COUNT', 10); $i++) {
-                $response = $client->request('/apis/batch/v1/namespaces/default/jobs/test-' . ($i + 1) . '/status', 'GET');
+                $jobName = env('JOB_NAME', 'test') . '-' . ($i + 1);
+                $response = $client->request("/apis/batch/v1/namespaces/default/jobs/$jobName/status", 'GET');
                 if (isset($response['status']['succeeded']) && $response['status']['succeeded'] == 1 || isset($response['status']['failed']) && $response['status']['failed'] == (int)env('JOB_RETRY', 4)) {
+                    $this->deleteJob($client, $jobName);
                     $finishCount++;
                 }
                 sleep(2);
@@ -93,9 +95,9 @@ class TestMultiBot extends Command
         }
     }
 
-    private function deleteAllJobs(Client $client)
+    private function deleteJob(Client $client, $jobName = "")
     {
-        $response = $client->request('/apis/batch/v1/namespaces/default/jobs', 'DELETE', [], ClusterHelper::getDeleteData());
+        $response = $client->request("/apis/batch/v1/namespaces/default/jobs/$jobName", 'DELETE', [], ClusterHelper::getDeleteData());
     }
 
     private function createAutoScalingGroup()
