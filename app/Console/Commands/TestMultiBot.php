@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Aws\AutoScaling\AutoScalingClient;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use KubernetesClient\Client;
 use KubernetesClient\Config;
 use App\Helpers\ClusterHelper;
@@ -41,16 +42,21 @@ class TestMultiBot extends Command
      */
     public function handle()
     {
-        switch ($this->argument('type')) {
-            case 'multi-bot':
-                $this->testMultiBot();
-                break;
-            case 'create-autoscaling-group':
-                $this->createAutoScalingGroup();
-                break;
-            case 'delete-autoscaling-group':
-                $this->deleteAutoScalingGroup();
-                break;
+        try {
+            switch ($this->argument('type')) {
+                case 'multi-bot':
+                    $this->testMultiBot();
+                    break;
+                case 'create-auto_scaling-group':
+                    $this->createAutoScalingGroup();
+                    break;
+                case 'delete-auto_scaling-group':
+                    $this->deleteAutoScalingGroup();
+                    break;
+            }
+        }
+        catch (\Exception $ex) {
+            Log::error($ex->getMessage());
         }
 
     }
