@@ -67,7 +67,7 @@ class TestMultiBot extends Command
         $client = new Client($config);
 
         for ($i = 0; $i < env('JOB_COUNT', 10); $i++) {
-            $response = $client->request("/apis/batch/v1/namespaces/default/jobs", 'POST', [], ClusterHelper::getJobData(($i + 1)));
+            $response = $client->request("/apis/batch/v1/namespaces/" . env('CLUSTER_NAMESPACE', 'default') . "/jobs", 'POST', [], ClusterHelper::getJobData(($i + 1)));
 
             if ($response['status'] == "Failure") {
                 echo 'Job ' . ($i + 1) . " failed \n";
@@ -90,7 +90,7 @@ class TestMultiBot extends Command
         while (true) {
             for ($i = 0; $i < env('JOB_COUNT', 10); $i++) {
                 $jobName = env('JOB_NAME', 'test') . '-' . ($i + 1);
-                $response = $client->request("/apis/batch/v1/namespaces/default/jobs/$jobName/status", 'GET');
+                $response = $client->request("/apis/batch/v1/namespaces/" . env('CLUSTER_NAMESPACE', 'default') . "/jobs/$jobName/status", 'GET');
                 if (isset($response['status']['succeeded']) && $response['status']['succeeded'] == 1 || isset($response['status']['failed']) && $response['status']['failed'] == (int)env('JOB_RETRY', 4)) {
                     $this->deleteJob($client, $jobName);
                     $finishCount++;
@@ -103,7 +103,7 @@ class TestMultiBot extends Command
 
     private function deleteJob(Client $client, $jobName = "")
     {
-        $response = $client->request("/apis/batch/v1/namespaces/default/jobs/$jobName", 'DELETE', [], ClusterHelper::getDeleteData());
+        $response = $client->request("/apis/batch/v1/namespaces/" . env('CLUSTER_NAMESPACE', 'default') . "/jobs/$jobName", 'DELETE', [], ClusterHelper::getDeleteData());
     }
 
     private function createAutoScalingGroup()
