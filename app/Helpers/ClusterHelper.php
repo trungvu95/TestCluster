@@ -32,7 +32,7 @@ class ClusterHelper
                                     ],
                                     [
                                         'name' => 'MONGO_DB_DATABASE',
-                                        'value' => "test-kubernetes"
+                                        'value' => "test_kubernetes"
                                     ],
                                     [
                                         'name' => 'MONGO_DB_USERNAME',

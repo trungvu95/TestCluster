@@ -92,6 +92,7 @@ class TestMultiBot extends Command
                 $jobName = env('JOB_NAME', 'test') . '-' . ($i + 1);
                 $response = $client->request("/apis/batch/v1/namespaces/" . env('CLUSTER_NAMESPACE', 'default') . "/jobs/$jobName/status", 'GET');
                 if (isset($response['status']['succeeded']) && $response['status']['succeeded'] == 1 || isset($response['status']['failed']) && $response['status']['failed'] == (int)env('JOB_RETRY', 4)) {
+                    echo 'Job ' . ($i + 1) . (isset($response['status']['succeeded']) ? " finished" : "failed") . PHP_EOL;
                     $this->deleteJob($client, $jobName);
                     $finishCount++;
                 }
