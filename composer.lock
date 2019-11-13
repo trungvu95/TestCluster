@@ -3392,6 +3392,55 @@
             "time": "2019-10-24T08:53:34+00:00"
         },
         {
+            "name": "travisghansen/kubernetes-client-php",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/travisghansen/kubernetes-client-php.git",
+                "reference": "9510e49a4e9d802ea60cb89e974849c5450dd605"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/travisghansen/kubernetes-client-php/zipball/9510e49a4e9d802ea60cb89e974849c5450dd605",
+                "reference": "9510e49a4e9d802ea60cb89e974849c5450dd605",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-yaml": "*",
+                "php": ">=7.2.0"
+            },
+            "suggest": {
+                "ext-pcntl": "support forking of watches"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "KubernetesClient\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Travis Glenn Hansen"
+                }
+            ],
+            "description": "Kubernetes API client in PHP supporting REST operations and Watches",
+            "homepage": "https://github.com/travisghansen/kubernetes-client-php/",
+            "keywords": [
+                "api",
+                "client",
+                "k8s",
+                "kubernetes",
+                "php",
+                "rest"
+            ],
+            "time": "2019-05-21T23:49:20+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v3.6.0",
             "source": {

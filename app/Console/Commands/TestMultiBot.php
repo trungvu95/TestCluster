@@ -13,7 +13,7 @@ class TestMultiBot extends Command
      *
      * @var string
      */
-    protected $signature = 'test:multi-bot';
+    protected $signature = 'test:kuber {type}';
 
     /**
      * The console command description.
@@ -38,6 +38,19 @@ class TestMultiBot extends Command
      * @return mixed
      */
     public function handle()
+    {
+        switch ($this->argument('type')) {
+            case 'multi-bot':
+                $this->testMultiBot();
+                break;
+            case 'create-autoscaling-group':
+                $this->createAutoScalingGroup();
+                break;
+        }
+
+    }
+
+    private function testMultiBot()
     {
         $config = Config::BuildConfigFromFile('/home/trungvl/.kube/kind-config-kind');
         $client = new Client($config);
@@ -137,5 +150,10 @@ class TestMultiBot extends Command
     private function deleteAllJobs(Client $client)
     {
         $response = $client->request('/apis/batch/v1/namespaces/default/jobs', 'DELETE', [], $this->getDeleteData());
+    }
+
+    private function createAutoScalingGroup()
+    {
+
     }
 }
