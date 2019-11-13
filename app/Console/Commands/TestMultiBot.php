@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use Aws\AutoScaling\AutoScalingClient;
 use Illuminate\Console\Command;
 use KubernetesClient\Client;
 use KubernetesClient\Config;
+use App\Helpers\ClusterHelper;
 
 class TestMultiBot extends Command
 {
@@ -13,7 +15,7 @@ class TestMultiBot extends Command
      *
      * @var string
      */
-    protected $signature = 'test:kuber {type}';
+    protected $signature = 'test:eks {type}';
 
     /**
      * The console command description.
@@ -56,12 +58,11 @@ class TestMultiBot extends Command
         $client = new Client($config);
 
         for ($i = 0; $i < env('JOB_COUNT', 10); $i++) {
-            $response = $client->request("/apis/batch/v1/namespaces/default/jobs", 'POST', [], $this->getJobData($i + 1));
+            $response = $client->request("/apis/batch/v1/namespaces/default/jobs", 'POST', [], ClusterHelper::getJobData(($i + 1)));
 
             if ($response['status'] == "Failure") {
                 echo 'Job ' . ($i + 1) . " failed \n";
-            }
-            else {
+            } else {
                 echo 'Job ' . ($i + 1) . " queued \n";
             }
         }
@@ -71,64 +72,6 @@ class TestMultiBot extends Command
 
             $this->deleteAllJobs($client);
         }
-    }
-
-    private function getJobData($jobNumber)
-    {
-        return [
-            'apiVersion' => 'batch/v1',
-            'kind' => 'Job',
-            'metadata' => [
-                'name' => env('JOB_NAME') . "-$jobNumber"
-            ],
-            'spec' => [
-                'template' => [
-                    'spec' => [
-                        'containers' => [
-                            [
-                                'name' => env('JOB_NAME') . "-$jobNumber",
-                                'image' => 'trungvl6295/test-cluster:latest',
-                                'env' => [
-                                    [
-                                        'name' => 'APP_KEY',
-                                        'value' => "base64:E+kyxc1CQ52ZKu0w4mURaYeciEh2a+inD16W66UPO5o="
-                                    ],
-                                    [
-                                        'name' => 'MONGO_DB_HOST',
-                                        'value' => "10.106.0.30"
-                                    ],
-                                    [
-                                        'name' => 'MONGO_DB_DATABASE',
-                                        'value' => "test-kubernetes"
-                                    ],
-                                    [
-                                        'name' => 'MONGO_DB_USERNAME',
-                                        'value' => ""
-                                    ],
-                                    [
-                                        'name' => 'MONGO_DB_PASSWORD',
-                                        'value' => ""
-                                    ]
-                                ],
-                                'imagePullPolicy' => 'Always',
-                                'command' => ["php", "/var/www/artisan", "test:cluster"]
-                            ]
-                        ],
-                        'restartPolicy' => 'Never'
-                    ]
-                ],
-                'backoffLimit' => (int)env('JOB_RETRY', 4)
-            ]
-        ];
-    }
-
-    private function getDeleteData()
-    {
-        return [
-            'apiVersion' => 'batch/v1',
-            'kind' => 'DeleteOptions',
-            'propagationPolicy' => 'Background'
-        ];
     }
 
     private function isAllJobDone(Client $client)
@@ -149,11 +92,18 @@ class TestMultiBot extends Command
 
     private function deleteAllJobs(Client $client)
     {
-        $response = $client->request('/apis/batch/v1/namespaces/default/jobs', 'DELETE', [], $this->getDeleteData());
+        $response = $client->request('/apis/batch/v1/namespaces/default/jobs', 'DELETE', [], ClusterHelper::getDeleteData());
     }
 
     private function createAutoScalingGroup()
     {
+        $client = new AutoScalingClient([
+            'region' => env('AWS_DEFAULT_REGION'),
+            'version' => 'latest'
+        ]);
 
+        $response = $client->createAutoScalingGroup(ClusterHelper::getCreateAutoScalingGroupData());
+
+        dd($response);
     }
 }
