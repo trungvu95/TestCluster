@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-cluster
+spec:
+  template:
+    spec:
+      containers:
+        - name: test-cluster
+          image: trungvl6295/test-cluster:latest
+          env:
+            - name: APP_KEY
+              value: "base64:E+kyxc1CQ52ZKu0w4mURaYeciEh2a+inD16W66UPO5o="
+            - name: MONGO_DB_HOST
+              value: "10.106.0.30"
+            - name: MONGO_DB_DATABASE
+              value: "test-kubernetes"
+            - name: MONGO_DB_USERNAME
+              value: ""
+            - name: MONGO_DB_PASSWORD
+              value: ""
+          imagePullPolicy: Always
+          command: ["php",  "/var/www/artisan", "test:cluster"]
+      restartPolicy: Never
+  backoffLimit: 4

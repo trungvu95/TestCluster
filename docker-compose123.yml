@@ -1,0 +1,9 @@
+version: '3'
+services:
+
+  # The Application
+  app:
+    image: trungvl/laravel-kubernetes-demo:latest
+    container_name: test_app
+    volumes:
+      - /var/www/storage
