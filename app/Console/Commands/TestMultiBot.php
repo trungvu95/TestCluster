@@ -63,7 +63,9 @@ class TestMultiBot extends Command
 
     private function testMultiBot()
     {
-        $config = Config::BuildConfigFromFile('/home/trungvl/.kube/kind-config-kind');
+        $token = json_decode(exec('aws eks get-token --region ap-northeast-1 --cluster-name kaopiz-test-cluster'), true)['status']['token'];
+        $config = Config::BuildConfigFromFile('/home/trungvl/.kube/config');
+        $config->setToken($token);
         $client = new Client($config);
 
         for ($i = 0; $i < env('JOB_COUNT', 10); $i++) {

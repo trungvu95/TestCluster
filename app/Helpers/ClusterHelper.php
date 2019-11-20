@@ -28,7 +28,7 @@ class ClusterHelper
                                     ],
                                     [
                                         'name' => 'MONGO_DB_HOST',
-                                        'value' => "10.106.0.30"
+                                        'value' => "52.199.82.125"
                                     ],
                                     [
                                         'name' => 'MONGO_DB_DATABASE',

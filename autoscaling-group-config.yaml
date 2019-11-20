@@ -1,0 +1,13 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: kaopiz-test-cluster
+  region: ap-northeast-1
+
+nodeGroups:
+  - name: workers
+    labels: { role: workers }
+    instanceType: t2.small
+    desiredCapacity: 1
+    privateNetworking: true
